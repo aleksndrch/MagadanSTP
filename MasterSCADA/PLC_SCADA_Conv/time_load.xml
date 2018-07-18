@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<ArrayOfScriptLib xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ScriptLib>
+    <NeedCompile>false</NeedCompile>
+    <ScriptNameProp>Чтение времени из ПЛК_47</ScriptNameProp>
+    <ScriptName>Чтение времени из ПЛК_47</ScriptName>
+    <IsScriptDT>false</IsScriptDT>
+    <CallDoAction>Не_вызывать</CallDoAction>
+    <Descriptor>
+      <CodeText>using System;
+using MasterSCADA.Script.FB;
+using MasterSCADA.Hlp;
+using FB;
+using FB.FBAttributes;
+using System.Linq;
+using System.Timers;
+
+[FBRetain]
+public partial class ФБ : ScriptBase
+{
+//Tm     - Для корректного преобразования минут
+//Th     - Для корректного преобразования часов
+    int Tm = 0;
+    int Th = 0; 	
+
+	public override void Start()
+	{
+	Tm = 60 / (int)TBase;	//6   - для базы 10
+	Th = 60 * Tm;			//360 - для базы 10
+	}
+
+    public override void Execute()
+    {
+//Налив (WT):
+//WT_TASK - задание на налив, //WT_CURRENT - текущее время налива
+	
+	h_wt = (WT_TASK - WT_CURRENT) / Th;							 // Часы
+	m_wt = (((WT_TASK - WT_CURRENT) - Th * h_wt) / Tm);			 // Минуты
+	s_wt = (((WT_TASK - WT_CURRENT) - Th * h_wt) % Tm) * TBase;  // Секунды 
+
+//Слив (DT):   
+//DT_TASK - задание на простой, //DT_CURRENT - текущее время простоя
+	h_dt = (DT_TASK - DT_CURRENT) / Th;							 // Часы
+	m_dt = (((DT_TASK - DT_CURRENT) - Th * h_dt) / Tm);			 // Минуты
+	s_dt = (((DT_TASK - DT_CURRENT) - Th * h_dt) % Tm) * TBase;  // Секунды	
+    }
+}
+
+
+</CodeText>
+      <Parameters>
+        <Parameter>
+          <Id>9</Id>
+          <Name>TBase</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>12</Id>
+          <Name>WT_CURRENT</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>13</Id>
+          <Name>h_wt</Name>
+          <ParamType>Запись</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>14</Id>
+          <Name>m_wt</Name>
+          <ParamType>Запись</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>15</Id>
+          <Name>s_wt</Name>
+          <ParamType>Запись</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>17</Id>
+          <Name>WT_TASK</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>18</Id>
+          <Name>DT_TASK</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>20</Id>
+          <Name>h_dt</Name>
+          <ParamType>Запись</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>21</Id>
+          <Name>m_dt</Name>
+          <ParamType>Запись</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>22</Id>
+          <Name>s_dt</Name>
+          <ParamType>Запись</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>23</Id>
+          <Name>DT_CURRENT</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+      </Parameters>
+    </Descriptor>
+    <References>
+      <string>System.Data</string>
+      <string>System.Xml</string>
+      <string>System.Windows.Forms</string>
+      <string>MasterSCADALib.dll</string>
+      <string>MasterSCADA.Common.dll</string>
+      <string>InSAT.Library.dll</string>
+      <string>FB.dll</string>
+      <string>MasterSCADA.Script.dll</string>
+    </References>
+  </ScriptLib>
+</ArrayOfScriptLib>

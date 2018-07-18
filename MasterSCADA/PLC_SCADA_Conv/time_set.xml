@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<ArrayOfScriptLib xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ScriptLib>
+    <NeedCompile>false</NeedCompile>
+    <ScriptNameProp>Формирование задания_14795</ScriptNameProp>
+    <ScriptName>Формирование задания_14795</ScriptName>
+    <IsScriptDT>false</IsScriptDT>
+    <CallDoAction>Не_вызывать</CallDoAction>
+    <Descriptor>
+      <CodeText>
+using System;
+using MasterSCADA.Script.FB;
+using MasterSCADA.Hlp;
+using FB;
+using FB.FBAttributes;
+using System.Linq;
+
+[FBRetain]
+public partial class ФБ : ScriptBase
+{
+//Tm     - Для корректного преобразования минут
+//Th     - Для корректного преобразования часов
+    int Tm = 0;
+    int Th = 0; 
+	int wt_s_corr = 0;
+	
+	public override void Start()
+    {
+	Tm = 60 / (int)T_BASE;	//6   - для базы 10
+	Th = 60 * Tm;			//360 - для базы 10
+	}
+	
+	
+    public override void Execute()
+    {  
+//Задание на налив    
+WT_TASK = Th*wt_h + Tm*wt_m + wt_s/T_BASE;
+
+//Задание на простой    
+DT_TASK = Th*dt_h + Tm*dt_m + dt_s/T_BASE;
+    }
+}
+</CodeText>
+      <Parameters>
+        <Parameter>
+          <Id>1</Id>
+          <Name>wt_h</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>2</Id>
+          <Name>wt_m</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>3</Id>
+          <Name>wt_s</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>4</Id>
+          <Name>WT_TASK</Name>
+          <ParamType>Запись</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>5</Id>
+          <Name>T_BASE</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>6</Id>
+          <Name>dt_h</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>7</Id>
+          <Name>dt_m</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>8</Id>
+          <Name>dt_s</Name>
+          <ParamType>Чтение</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+        <Parameter>
+          <Id>9</Id>
+          <Name>DT_TASK</Name>
+          <ParamType>Запись</ParamType>
+          <ValueType>Целый</ValueType>
+        </Parameter>
+      </Parameters>
+    </Descriptor>
+    <References>
+      <string>System.Data</string>
+      <string>System.Xml</string>
+      <string>System.Windows.Forms</string>
+      <string>MasterSCADALib.dll</string>
+      <string>MasterSCADA.Common.dll</string>
+      <string>InSAT.Library.dll</string>
+      <string>FB.dll</string>
+      <string>MasterSCADA.Script.dll</string>
+    </References>
+  </ScriptLib>
+</ArrayOfScriptLib>
